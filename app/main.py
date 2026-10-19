@@ -93,6 +93,11 @@ def find_existing(q: str) -> dict | None:
     return None
 
 
+@app.get("/api/health")
+def api_health():
+    return storage.health() | {"llm_key_configured": bool(os.getenv("GEMINI_API_KEY")), "guides": len(all_guides())}
+
+
 @app.get("/api/guides")
 def api_list():
     return all_guides()

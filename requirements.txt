@@ -6,3 +6,4 @@ google-genai
 ddgs
 python-dotenv
 pydantic
+redis

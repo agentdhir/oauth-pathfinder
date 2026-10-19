@@ -12,23 +12,39 @@ DATA_DIR = Path("/tmp/oauth-pathfinder") if os.getenv("VERCEL") else ROOT
 GENERATED = DATA_DIR / "guides"
 CACHE_DIR = DATA_DIR / "cache"
 
-_URL = os.getenv("KV_REST_API_URL") or os.getenv("UPSTASH_REDIS_REST_URL")
+_REDIS_URL = os.getenv("REDIS_URL")  # standard connection string (what Vercel's Redis integration sets)
+_URL = os.getenv("KV_REST_API_URL") or os.getenv("UPSTASH_REDIS_REST_URL")  # or Upstash's REST API
 _TOKEN = os.getenv("KV_REST_API_TOKEN") or os.getenv("UPSTASH_REDIS_REST_TOKEN")
+_client = None
 
 
 def redis(*cmd):
-    """One Redis command over Upstash's REST API; None if Redis isn't configured or fails."""
-    if not (_URL and _TOKEN):
-        return None
+    """Run one Redis command; None if Redis isn't configured or the call fails."""
+    global _client
     try:
-        r = httpx.post(_URL, headers={"Authorization": f"Bearer {_TOKEN}"}, json=[str(c) for c in cmd], timeout=10)
-        return r.json().get("result")
+        if _REDIS_URL:
+            if _client is None:
+                import redis as redis_lib
+                _client = redis_lib.Redis.from_url(_REDIS_URL, decode_responses=True, socket_timeout=10)
+            return _client.execute_command(*cmd)
+        if _URL and _TOKEN:
+            r = httpx.post(_URL, headers={"Authorization": f"Bearer {_TOKEN}"}, json=[str(c) for c in cmd], timeout=10)
+            return r.json().get("result")
     except Exception:
         return None
+    return None
 
 
 def using_redis() -> bool:
-    return bool(_URL and _TOKEN)
+    return bool(_REDIS_URL or (_URL and _TOKEN))
+
+
+def health() -> dict:
+    """Round-trip check for /api/health (never returns connection details)."""
+    if not using_redis():
+        return {"storage": "files (temporary on Vercel)", "redis_ok": None}
+    ok = redis("SET", "health:ping", "pong", "EX", 60) is not None and redis("GET", "health:ping") == "pong"
+    return {"storage": "redis", "redis_ok": ok}
 
 
 def save_generated(slug: str, guide_json: str):
