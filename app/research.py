@@ -89,9 +89,8 @@ def llm(prompt: str, schema, emit, label: str, light: bool = False):
         if deadline and model not in LIGHT_MODELS and time.time() > deadline - 75:
             emit("skip", f"Running out of time; skipping {model} for a faster model")
             continue
-        tries = 2 if (light or model in LIGHT_MODELS) else 3  # strong models are often briefly "busy": wait a bit longer
-        if deadline and time.time() > deadline - 120:
-            tries = 1
+        # one retry for light models; a "busy" strong model can take ~30s just to say so, so move on instead of waiting
+        tries = 2 if (light or model in LIGHT_MODELS) else 1
         for attempt in range(tries):
             try:
                 emit("think", f"{label} with {model}" + (" (retry)" if attempt else ""))
@@ -112,8 +111,10 @@ def llm(prompt: str, schema, emit, label: str, light: bool = False):
                     emit("skip", f"{model} out of free quota" + (" for today" if wait > 3600 else f" for {wait:.0f}s") + ", trying next model")
                     break
                 if any(x in msg for x in ("503", "UNAVAILABLE", "overloaded", "500", "INTERNAL")):
-                    emit("skip", f"{model} busy")
-                    time.sleep(2 if tries == 2 else 6 * (attempt + 1))
+                    emit("skip", f"{model} busy" + (", trying the next model" if attempt + 1 >= tries else ""))
+                    _exhausted[model] = time.time() + 120  # don't hit a busy model again for 2 minutes
+                    if attempt + 1 < tries:
+                        time.sleep(2)
                     continue
                 if type(e).__name__ == "ValidationError":
                     continue
@@ -271,8 +272,8 @@ Sources:
 
 
 def extract(res: Resolution, pages: list[dict], emit, label: str, light: bool = False) -> tuple[GuideDraft, str]:
-    label = {"official": "OFFICIAL", "community": "COMMUNITY FORUM", "third-party": "THIRD-PARTY"}
-    blocks = "\n\n".join(f"[S{p['id']}] ({label[p.get('kind', 'official')]}) {p['title']} <{p['url']}>\n{p['text']}"
+    kind_label = {"official": "OFFICIAL", "community": "COMMUNITY FORUM", "third-party": "THIRD-PARTY"}
+    blocks = "\n\n".join(f"[S{p['id']}] ({kind_label[p.get('kind', 'official')]}) {p['title']} <{p['url']}>\n{p['text']}"
                          for p in pages)
     return llm(PROMPT.format(app=res.app_name, provider=res.provider, sources=blocks), GuideDraft, emit, label, light)
 
