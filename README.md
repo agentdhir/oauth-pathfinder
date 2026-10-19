@@ -83,7 +83,7 @@ python scripts/reverify.py                 # re-check every saved quote against 
 
 1. Import the GitHub repo in Vercel. FastAPI is detected from `requirements.txt`, and the entrypoint is `app/main.py`. `vercel.json` sets a 300 s max duration, which a live generation needs.
 2. Add environment variables: `GEMINI_API_KEY` (required), plus `GEMINI_MODELS` and `GEMINI_LIGHT_MODELS` from `.env.example`.
-3. Optional but recommended: **Storage → Upstash Redis** (free) in the Vercel dashboard. It sets `KV_REST_API_URL` / `KV_REST_API_TOKEN`. Without it, live-generated guides live only in the function's `/tmp` and their share links can break when the instance is recycled. Curated guides are always fine.
+3. Recommended: **Storage → Create Database → Upstash (Redis)**, free plan, connected to the project. It sets `REDIS_URL` (Upstash REST variables also work). Without it, live-generated guides live only in the function's `/tmp`, and their share links break on redeploy or cold start. Curated guides are always fine. Check `/api/health`: it reports the storage backend with a write/read round trip.
 
 ## Limitations
 
