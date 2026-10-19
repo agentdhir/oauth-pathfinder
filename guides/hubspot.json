@@ -1,0 +1,632 @@
+{
+  "slug": "hubspot",
+  "app_name": "HubSpot",
+  "website": "https://www.hubspot.com",
+  "category": "CRM",
+  "summary": "To ship OAuth for HubSpot, the developer must create an app in their HubSpot development settings to obtain client credentials, configure their redirect URI and required scopes, construct an authorization URL to prompt the user for consent, and finally exchange the returned authorization code via a POST request for short-lived access tokens and persistent refresh tokens.",
+  "difficulty": "easy",
+  "difficulty_reason": "Creating a HubSpot developer account and setting up an OAuth app can be done entirely via self-serve instructions within minutes, though optional marketplace distribution or public listing adds rigorous manual review.",
+  "setup_time": "15-30 minutes",
+  "approval_wait": "None",
+  "approval_required": false,
+  "approval_details": "",
+  "authorization_url": "https://app.hubspot.com/oauth/authorize",
+  "token_url": "https://api.hubapi.com/oauth/v3/token",
+  "developer_console_url": "https://developers.hubspot.com",
+  "uses_pkce": false,
+  "requirements": [
+    {
+      "text": "An app created within HubSpot developer settings",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "An app . Consult the app creation guide to create and customize a new app",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "A HubSpot account to install your app in (existing or a test account)",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "A HubSpot account to install your app in (you can use an existing account or create a test account)",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "The installing user must be a Super Admin or have HubSpot Marketplace Access permissions",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "You must be a Super Admin to install an app in a HubSpot account.",
+          "verified": true
+        },
+        {
+          "source_id": 2,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth",
+          "quote": "Users installing apps in their HubSpot account must either be a Super Admin or have HubSpot Marketplace Access permissions.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "steps": [
+    {
+      "text": "Create an app in your developer account to obtain your app's client ID and client secret on the Auth page of your app settings.",
+      "evidence": [
+        {
+          "source_id": 2,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth",
+          "quote": "Create a new app . After creating the app, you’ll be able to find the app’s client ID and client secret on the Auth page of your app settings.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Create a HubSpot Developer Account and App",
+      "url": "https://developers.hubspot.com",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Designate your redirect URI and required scopes on your app's Auth settings page or within your project configuration file.",
+      "evidence": [
+        {
+          "source_id": 2,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth",
+          "quote": "redirect_uri The URL visitors will be redirected to after granting access to your app. You’ll also designate this on your app’s Auth settings page.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Configure Redirect URI and Scopes",
+      "url": "https://developers.hubspot.com",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Build the authorization URL targeting https://app.hubspot.com/oauth/authorize with your client_id, scope, and redirect_uri parameters, then direct the user to it.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "const authUrl = \"https://app.hubspot.com/oauth/authorize\" + `?client_id=${encodeURIComponent(CLIENT_ID)}`",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Construct and Send Users to the Authorization URL",
+      "url": "https://app.hubspot.com/oauth/authorize",
+      "actor": "agent",
+      "required": true
+    },
+    {
+      "text": "The user reviews the requested permissions and grants access on HubSpot's consent screen, which redirects them back with an authorization code.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "HubSpot displays a consent window to the user showing the name of your app and a short description of the HubSpot API services it’s requesting permission to access.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "User Grants Consent",
+      "url": "",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Send a URL-form encoded POST request to https://api.hubapi.com/oauth/v3/token with grant_type=authorization_code, client_id, client_secret, redirect_uri, and the received code.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "After your app receives an authorization code from the OAuth 2.0 server, it can exchange that code for an access and refresh token by sending a URL-form encoded POST request to https://api.hubapi.com/oauth/v3/token",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Exchange Authorization Code for Tokens",
+      "url": "https://api.hubapi.com/oauth/v3/token",
+      "actor": "agent",
+      "required": true
+    }
+  ],
+  "nuances": [
+    {
+      "text": "For production applications, https is required for redirect URIs, whereas http can be used when testing using localhost. IP addresses are not supported.",
+      "evidence": [
+        {
+          "source_id": 2,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth",
+          "quote": "For security reasons, this URL must use https in production. (When testing using localhost, http can be used.) You also must use a domain, as IP addresses are not supported.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "Access tokens expire after 30 minutes (1800 seconds).",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "The access token will expire after the number of seconds given in the expires_in field of the response, currently 30 minutes.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "Access tokens reflect requested scopes and do not reflect the permissions or limitations of what a user can do in their HubSpot account.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "Access tokens reflect the scopes requested from the app and do not reflect the permissions or limitations of what a user can do in their HubSpot account.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "blockers": [
+    {
+      "issue": "Installation fails with a permissions error page",
+      "why_it_happens": "The user installing the app does not have access to all requested scopes.",
+      "workaround": "Have a Super Admin install the app.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+          "quote": "The user installing the app must have access to all requested scopes. If they don’t have the required access, the installation will fail and they will be directed to an error page.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "agent_can_do": [
+    "Construct authorization URLs",
+    "Exchange authorization codes for tokens via API",
+    "Refresh access tokens using refresh tokens via API"
+  ],
+  "developer_must_do": [
+    "Create the HubSpot developer account and register the app",
+    "Configure app settings, redirect URIs, and scopes in the developer console",
+    "Authorize or grant permissions during the user-consent flow using a Super Admin account"
+  ],
+  "unverified": [
+    "Are there specific rate limits for the token endpoint beyond general API rate limits?"
+  ],
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide",
+      "title": "OAuth Quickstart Guide - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 10656,
+      "official": true
+    },
+    {
+      "id": 2,
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth",
+      "title": "Working with OAuth - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 8812,
+      "official": true
+    },
+    {
+      "id": 3,
+      "url": "https://developers.hubspot.com/docs/apps/legacy-apps/authentication/working-with-oauth",
+      "title": "Working with OAuth - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 5789,
+      "official": true
+    },
+    {
+      "id": 4,
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes",
+      "title": "Scopes - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 3528,
+      "official": true
+    },
+    {
+      "id": 5,
+      "url": "https://developers.hubspot.com/docs/apps/legacy-apps/authentication/scopes",
+      "title": "Scopes - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 6,
+      "url": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/manage-oauth-tokens",
+      "title": "Manage OAuth access tokens using the v3 APIs - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 9256,
+      "official": true
+    },
+    {
+      "id": 7,
+      "url": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/oauth-tokens/v1/guide",
+      "title": "Manage OAuth access tokens using the v1 APIs - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 5995,
+      "official": true
+    },
+    {
+      "id": 8,
+      "url": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/oauth-tokens/create-oauth-token",
+      "title": "OAuth token endpoint - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 10107,
+      "official": true
+    },
+    {
+      "id": 9,
+      "url": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/oauth-tokens/token-introspect",
+      "title": "Token introspection endpoint - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 8923,
+      "official": true
+    },
+    {
+      "id": 10,
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements",
+      "title": "App listing requirements in the HubSpot Marketplace - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 9211,
+      "official": true
+    },
+    {
+      "id": 11,
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/marketplace-restrictions",
+      "title": "HubSpot Marketplace restrictions - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 3986,
+      "official": true
+    },
+    {
+      "id": 12,
+      "url": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/apply-for-certification/certification-requirements",
+      "title": "HubSpot Marketplace | HubSpot Marketplace certification requirements - HubSpot docs",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    }
+  ],
+  "probes": [
+    {
+      "name": "Authorization endpoint responds",
+      "url": "https://app.hubspot.com/oauth/authorize",
+      "result": "HTTP 200",
+      "ok": true
+    },
+    {
+      "name": "Token endpoint rejects dummy credentials",
+      "url": "https://api.hubapi.com/oauth/v3/token",
+      "result": "HTTP 400: {\"status\":\"BAD_AUTH_CODE\",\"message\":\"missing or unknown auth code\",\"correlationId\":\"01a154f7-68e1-7b84-9971-5ffe8852cacd\",\"error\":\"invalid_request\",\"error_description\":\"missing or ",
+      "ok": true
+    }
+  ],
+  "evidence_stats": {
+    "claims": 13,
+    "verified": 12,
+    "partial": 0,
+    "unsupported": 1,
+    "quotes": 13,
+    "quotes_verified": 13
+  },
+  "generated_at": "2026-10-19T16:21:02+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "timing": {
+    "text": "Setup 15-30 minutes; approval wait None",
+    "evidence": [],
+    "confidence": "unsupported"
+  },
+  "trace": [
+    {
+      "t": 0.0,
+      "kind": "plan",
+      "msg": "Researching HubSpot"
+    },
+    {
+      "t": 0.0,
+      "kind": "search",
+      "msg": "HubSpot OAuth app create developer docs"
+    },
+    {
+      "t": 2.1,
+      "kind": "search",
+      "msg": "HubSpot register new OAuth application client ID client secret"
+    },
+    {
+      "t": 7.8,
+      "kind": "search",
+      "msg": "HubSpot OAuth app review verification publish approval"
+    },
+    {
+      "t": 13.5,
+      "kind": "think",
+      "msg": "Identifying the official developer docs with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 40.8,
+      "kind": "plan",
+      "msg": "HubSpot: OAuth provider HubSpot; official docs on hubspot.com"
+    },
+    {
+      "t": 40.8,
+      "kind": "search",
+      "msg": "site:developers.hubspot.com OAuth app review OR publish OR verification OR scopes"
+    },
+    {
+      "t": 45.1,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide"
+    },
+    {
+      "t": 46.4,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide"
+    },
+    {
+      "t": 46.4,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/build-apps/authentication/oauth/oauth-quickstart-guide"
+    },
+    {
+      "t": 46.4,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth"
+    },
+    {
+      "t": 47.6,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth"
+    },
+    {
+      "t": 47.6,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth"
+    },
+    {
+      "t": 47.6,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/legacy-apps/authentication/working-with-oauth"
+    },
+    {
+      "t": 48.7,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/apps/legacy-apps/authentication/working-with-oauth"
+    },
+    {
+      "t": 48.7,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/apps/legacy-apps/authentication/working-with-oauth"
+    },
+    {
+      "t": 48.7,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes"
+    },
+    {
+      "t": 49.3,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/legacy-apps/authentication/scopes"
+    },
+    {
+      "t": 50.3,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/legacy-apps/authentication/oauth-quickstart-guide"
+    },
+    {
+      "t": 51.0,
+      "kind": "skip",
+      "msg": "Duplicate of a page already read (another version/mirror): https://developers.hubspot.com/docs/apps/legacy-apps/authentication/oauth-quickstart-guide"
+    },
+    {
+      "t": 51.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/build-apps/authentication/scopes"
+    },
+    {
+      "t": 51.0,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/build-apps/authentication/scopes"
+    },
+    {
+      "t": 51.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/apps/legacy-apps/authentication/scopes"
+    },
+    {
+      "t": 51.0,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/apps/legacy-apps/authentication/scopes"
+    },
+    {
+      "t": 51.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/manage-oauth-tokens"
+    },
+    {
+      "t": 51.9,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/manage-oauth-tokens"
+    },
+    {
+      "t": 51.9,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/manage-oauth-tokens"
+    },
+    {
+      "t": 51.9,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/oauth-tokens/v1/guide"
+    },
+    {
+      "t": 52.9,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/oauth-tokens/v1/guide"
+    },
+    {
+      "t": 52.9,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/oauth-tokens/v1/guide"
+    },
+    {
+      "t": 52.9,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/oauth-tokens/create-oauth-token"
+    },
+    {
+      "t": 54.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/oauth-tokens/create-oauth-token"
+    },
+    {
+      "t": 54.0,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/oauth-tokens/create-oauth-token"
+    },
+    {
+      "t": 54.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/api-reference/legacy/authentication/oauth-tokens/token-introspect"
+    },
+    {
+      "t": 55.6,
+      "kind": "think",
+      "msg": "Drafting from 9 pages to find gaps with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 64.1,
+      "kind": "gap",
+      "msg": "Investigating 1 open questions: Are there any review requirements or wait times when submitting an app to the HubSpot Marketplace?"
+    },
+    {
+      "t": 64.1,
+      "kind": "search",
+      "msg": "site:developers.hubspot.com Are there any review requirements or wait times when submitting an app to the HubSpot Mark"
+    },
+    {
+      "t": 68.8,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements"
+    },
+    {
+      "t": 70.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements"
+    },
+    {
+      "t": 70.0,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/apps/developer-platform/list-apps/listing-your-app/app-marketplace-listing-requirements"
+    },
+    {
+      "t": 70.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/oauth-tokens/token-introspect"
+    },
+    {
+      "t": 70.0,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.hubspot.com/docs/login?redirect=/api-reference/legacy/authentication/oauth-tokens/token-introspect"
+    },
+    {
+      "t": 70.0,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/listing-your-app/marketplace-restrictions"
+    },
+    {
+      "t": 71.1,
+      "kind": "read",
+      "msg": "https://developers.hubspot.com/docs/apps/developer-platform/list-apps/apply-for-certification/certification-requirements"
+    },
+    {
+      "t": 71.9,
+      "kind": "gap",
+      "msg": "Found 3 new pages"
+    },
+    {
+      "t": 72.5,
+      "kind": "think",
+      "msg": "Writing final guide from 12 pages with gemini-3.8-flash"
+    },
+    {
+      "t": 73.5,
+      "kind": "skip",
+      "msg": "gemini-3.8-flash out of free quota for today, trying next model"
+    },
+    {
+      "t": 73.5,
+      "kind": "think",
+      "msg": "Writing final guide from 12 pages with gemini-3-flash-preview"
+    },
+    {
+      "t": 79.7,
+      "kind": "skip",
+      "msg": "gemini-3-flash-preview busy"
+    },
+    {
+      "t": 85.7,
+      "kind": "think",
+      "msg": "Writing final guide from 12 pages with gemini-3-flash-preview (retry)"
+    },
+    {
+      "t": 87.3,
+      "kind": "skip",
+      "msg": "gemini-3-flash-preview busy"
+    },
+    {
+      "t": 99.3,
+      "kind": "think",
+      "msg": "Writing final guide from 12 pages with gemini-3-flash-preview (retry)"
+    },
+    {
+      "t": 100.8,
+      "kind": "skip",
+      "msg": "gemini-3-flash-preview busy"
+    },
+    {
+      "t": 118.8,
+      "kind": "think",
+      "msg": "Writing final guide from 12 pages with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 124.9,
+      "kind": "verify",
+      "msg": "Checking every quote against the fetched page text"
+    },
+    {
+      "t": 125.0,
+      "kind": "verify",
+      "msg": "13/13 quotes found verbatim in sources; timeline is an estimate (no source states it)"
+    },
+    {
+      "t": 125.3,
+      "kind": "probe",
+      "msg": "GET https://app.hubspot.com/oauth/authorize with a dummy client_id"
+    },
+    {
+      "t": 125.7,
+      "kind": "probe",
+      "msg": "POST https://api.hubapi.com/oauth/v3/token with dummy credentials"
+    }
+  ],
+  "composio": null,
+  "review": null,
+  "model_tier": "fallback"
+}

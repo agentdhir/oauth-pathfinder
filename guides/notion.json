@@ -1,0 +1,463 @@
+{
+  "slug": "notion",
+  "app_name": "Notion",
+  "website": "https://www.notion.com",
+  "category": "Productivity",
+  "summary": "To ship OAuth for Notion, the developer must create an internal connection in the Notion Developer portal, convert it to a public connection by setting an installation scope and redirect URIs, and then implement the OAuth 2.0 authorization code flow to exchange temporary codes for access tokens.",
+  "difficulty": "easy",
+  "difficulty_reason": "Creating a public connection is self-serve via the Developer portal and requires no initial platform review to obtain OAuth credentials or begin testing with users.",
+  "setup_time": "15-30 minutes",
+  "approval_wait": "5-10 business days (only if submitting to the Marketplace)",
+  "approval_required": false,
+  "approval_details": "Review by the Notion team is only required if you choose to submit your public connection to the Notion Marketplace. Otherwise, basic OAuth usage requires no approval.",
+  "authorization_url": "https://api.notion.com/v1/oauth/authorize",
+  "token_url": "https://api.notion.com/v1/oauth/token",
+  "developer_console_url": "https://www.notion.press",
+  "uses_pkce": false,
+  "requirements": [
+    {
+      "text": "Workspace owner permissions are required to create integrations and access the Connections tab.",
+      "evidence": [
+        {
+          "source_id": 5,
+          "url": "https://www.notion.com/help/create-integrations-with-the-notion-api",
+          "quote": "Only Workspace owners will be able to access the Connections tab and create integrations.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "steps": [
+    {
+      "text": "Navigate to Notion, open Settings from your left sidebar, navigate to the Connections tab, and turn on Developer Mode.",
+      "evidence": [
+        {
+          "source_id": 5,
+          "url": "https://www.notion.com/help/create-integrations-with-the-notion-api",
+          "quote": "In your left sidebar, navigate to Settings and then the Connections tab... Turn on Developer Mode, then open personal access tokens from the developer section in your sidebar.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Log in and turn on Developer Mode",
+      "url": "",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Click + New connection, provide a Name, optionally upload a Logo, and select your Associated workspace.",
+      "evidence": [
+        {
+          "source_id": 5,
+          "url": "https://www.notion.com/help/create-integrations-with-the-notion-api",
+          "quote": "Click + New connection. Provide a Name for your connection. Optionally, you can also upload an image to use as a Logo. Use the dropdown menu to specify which Associated workspace...",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Create an internal connection",
+      "url": "",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Navigate to the Developer portal under Public connections, configure redirect URI(s), and select your installation scope (Either 'Any workspace' or 'Selected workspaces only').",
+      "evidence": [
+        {
+          "source_id": 10,
+          "url": "https://developers.notion.com/guides/get-started/public-connections",
+          "quote": "In the Build section of the sidebar, select Public connections... Click Create new connection and fill in the required fields, including: Connection name and development workspace, Redirect URI(s)... Installation scope...",
+          "verified": false
+        }
+      ],
+      "confidence": "unsupported",
+      "title": "Convert to a public connection and set installation scope",
+      "url": "",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Visit the Configuration tab of your newly created public connection to retrieve your OAuth client ID and client secret.",
+      "evidence": [
+        {
+          "source_id": 10,
+          "url": "https://developers.notion.com/guides/get-started/public-connections",
+          "quote": "After creation, visit the Configuration tab to retrieve your OAuth client ID and client secret.",
+          "verified": false
+        }
+      ],
+      "confidence": "unsupported",
+      "title": "Retrieve OAuth credentials",
+      "url": "",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Construct a link to https://api.notion.com/v1/oauth/authorize with parameters client_id, redirect_uri, response_type=code, and owner=user, and have users visit it to grant workspace access.",
+      "evidence": [
+        {
+          "source_id": 3,
+          "url": "https://developers.notion.com/guides/get-started/authorization",
+          "quote": "The URL begins with https://api.notion.com/v1/oauth/authorize and has the following parameters: client_id, redirect_uri, response_type, owner...",
+          "verified": false
+        }
+      ],
+      "confidence": "unsupported",
+      "title": "Direct users to the authorization URL",
+      "url": "https://api.notion.com/v1/oauth/authorize",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Retrieve the temporary code parameter from your redirect URI and make a POST request to https://api.notion.com/v1/oauth/token using HTTP Basic Authentication with your encoded client ID and secret, passing grant_type='authorization_code', code, and redirect_uri in the JSON body.",
+      "evidence": [
+        {
+          "source_id": 3,
+          "url": "https://developers.notion.com/guides/get-started/authorization",
+          "quote": "send the code as part of a POST request to Notion’s token endpoint: https://api.notion.com/v1/oauth/token.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Exchange authorization code for an access token",
+      "url": "https://api.notion.com/v1/oauth/token",
+      "actor": "agent",
+      "required": true
+    },
+    {
+      "text": "Go to the Marketplace listing dashboard, select Connections under Drafts, fill in your listing information, and submit it for review.",
+      "evidence": [
+        {
+          "source_id": 6,
+          "url": "https://developers.notion.com/guides/get-started/marketplace-listing",
+          "quote": "In the Listings section of the sidebar, select Connections. Under Drafts, click Start a new connection listing... Submit your listing for review by the Notion team.",
+          "verified": false
+        }
+      ],
+      "confidence": "unsupported",
+      "title": "Submit listing to the Marketplace (Optional)",
+      "url": "",
+      "actor": "developer",
+      "required": false
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Installation scope (Any workspace vs. Selected workspaces only) is set once at creation time and cannot be changed afterward.",
+      "evidence": [
+        {
+          "source_id": 10,
+          "url": "https://developers.notion.com/guides/get-started/public-connections",
+          "quote": "Installation scope is set once, at creation time, and can’t be changed afterward. If you pick Selected workspaces only and later want to list on the Marketplace, create a new connection.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "Unlike internal connections, public connections require each individual member of a workspace to complete the OAuth flow separately if they want to use it.",
+      "evidence": [
+        {
+          "source_id": 3,
+          "url": "https://developers.notion.com/guides/get-started/authorization",
+          "quote": "Unlike internal connections, if multiple members in a workspace want to use a public connection, each prospective user needs to individually follow the auth flow for the connection.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "blockers": [
+    {
+      "issue": "Connection fails with access or content errors during use",
+      "why_it_happens": "The user may not have authenticated with the proper account, or the page was not shared via the page picker.",
+      "workaround": "Confirm the user authenticated with the correct account or re-authenticate through connection settings.",
+      "evidence": [
+        {
+          "source_id": 8,
+          "url": "https://www.notion.com/help/link-previews",
+          "quote": "You may not have authenticated with the account that has access. You can connect multiple accounts either through Settings → My connections, or the error drop down.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "agent_can_do": [
+    "Handle the OAuth token exchange POST request",
+    "Call Notion API endpoints using the acquired access tokens"
+  ],
+  "developer_must_do": [
+    "Log in as a workspace owner and turn on Developer Mode",
+    "Create and configure the public connection in the developer portal",
+    "Store client IDs and secrets securely as environment variables"
+  ],
+  "unverified": [
+    "Exact token expiration lifetimes in seconds/milliseconds for public OAuth access tokens.",
+    "Whether refresh tokens are issued and what their lifetime policy is."
+  ],
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://www.dummyoauth.com/guides/oauth-scopes-and-consent",
+      "title": "OAuth scopes and consent: what to request and why | dummyoauth",
+      "fetched_via": "direct",
+      "chars": 2653,
+      "official": false
+    },
+    {
+      "id": 2,
+      "url": "https://developers.notion.com/workers/guides/oauth",
+      "title": "OAuth - Notion Docs",
+      "fetched_via": "direct",
+      "chars": 5780,
+      "official": true
+    },
+    {
+      "id": 3,
+      "url": "https://developers.notion.com/guides/get-started/authorization",
+      "title": "Authorization - Notion Docs",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 4,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/overview",
+      "title": "OAuth app state overview  |  App verification to use Google Authorization APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 6131,
+      "official": false
+    },
+    {
+      "id": 5,
+      "url": "https://www.notion.com/help/create-integrations-with-the-notion-api",
+      "title": "Create integrations with the Notion API | Notion Help – Notion Help Center",
+      "fetched_via": "direct",
+      "chars": 4179,
+      "official": true
+    },
+    {
+      "id": 6,
+      "url": "https://developers.notion.com/guides/get-started/marketplace-listing",
+      "title": "List on the Marketplace - Notion Docs",
+      "fetched_via": "direct",
+      "chars": 3503,
+      "official": true
+    },
+    {
+      "id": 7,
+      "url": "https://developers.notion.com/guides/link-previews/introduction",
+      "title": "Introduction - Notion Docs",
+      "fetched_via": "direct",
+      "chars": 2525,
+      "official": true
+    },
+    {
+      "id": 8,
+      "url": "https://www.notion.com/help/link-previews",
+      "title": "Link previews in Notion | Notion Help – Notion Help Center",
+      "fetched_via": "direct",
+      "chars": 4034,
+      "official": true
+    },
+    {
+      "id": 9,
+      "url": "https://www.notion.com/help/add-and-manage-connections-with-the-api",
+      "title": "Add & manage connections in Notion | Notion Help – Notion Help Center",
+      "fetched_via": "direct",
+      "chars": 7079,
+      "official": true
+    },
+    {
+      "id": 10,
+      "url": "https://developers.notion.com/guides/get-started/public-connections",
+      "title": "Public connections - Notion Docs",
+      "fetched_via": "direct",
+      "chars": 4958,
+      "official": true
+    }
+  ],
+  "probes": [
+    {
+      "name": "Authorization endpoint responds",
+      "url": "https://api.notion.com/v1/oauth/authorize",
+      "result": "HTTP 302 → redirects to https://app.notion.com/install-integration?response_type=code&client_id=pathfinder-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&s",
+      "ok": true
+    },
+    {
+      "name": "Token endpoint rejects dummy credentials",
+      "url": "https://api.notion.com/v1/oauth/token",
+      "result": "HTTP 401: {\"error\":\"invalid_client\",\"request_id\":\"3c3ed4d9-cfd5-4e31-ba32-f79111f929a6\"}",
+      "ok": true
+    }
+  ],
+  "evidence_stats": {
+    "claims": 12,
+    "verified": 8,
+    "partial": 0,
+    "unsupported": 4,
+    "quotes": 12,
+    "quotes_verified": 8
+  },
+  "generated_at": "2026-10-19T16:25:08+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "timing": {
+    "text": "Setup 15-30 minutes; approval wait 5-10 business days (only if submitting to the Marketplace)",
+    "evidence": [
+      {
+        "source_id": 6,
+        "url": "https://developers.notion.com/guides/get-started/marketplace-listing",
+        "quote": "After submission, expect to hear back from our team within 5-10 business days via email.",
+        "verified": true
+      }
+    ],
+    "confidence": "verified"
+  },
+  "trace": [
+    {
+      "t": 0.0,
+      "kind": "plan",
+      "msg": "Researching Notion"
+    },
+    {
+      "t": 0.0,
+      "kind": "search",
+      "msg": "Notion OAuth app create developer docs"
+    },
+    {
+      "t": 5.3,
+      "kind": "search",
+      "msg": "Notion register new OAuth application client ID client secret"
+    },
+    {
+      "t": 7.5,
+      "kind": "search",
+      "msg": "Notion OAuth app review verification publish approval"
+    },
+    {
+      "t": 13.3,
+      "kind": "think",
+      "msg": "Identifying the official developer docs with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 24.8,
+      "kind": "plan",
+      "msg": "Notion: OAuth provider Notion; official docs on notion.com, notion.so"
+    },
+    {
+      "t": 24.8,
+      "kind": "search",
+      "msg": "site:developers.notion.com OAuth app review OR publish OR verification OR scopes"
+    },
+    {
+      "t": 30.9,
+      "kind": "read",
+      "msg": "https://www.dummyoauth.com/guides/oauth-scopes-and-consent"
+    },
+    {
+      "t": 34.0,
+      "kind": "read",
+      "msg": "https://developers.notion.com/workers/guides/oauth"
+    },
+    {
+      "t": 34.2,
+      "kind": "read",
+      "msg": "https://developers.notion.com/guides/get-started/authorization"
+    },
+    {
+      "t": 34.2,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness/overview"
+    },
+    {
+      "t": 34.3,
+      "kind": "read",
+      "msg": "https://www.notion.com/help/create-integrations-with-the-notion-api"
+    },
+    {
+      "t": 34.4,
+      "kind": "read",
+      "msg": "https://developers.notion.com/guides/get-started/marketplace-listing"
+    },
+    {
+      "t": 34.4,
+      "kind": "read",
+      "msg": "https://developers.notion.com/guides/link-previews/introduction"
+    },
+    {
+      "t": 34.4,
+      "kind": "read",
+      "msg": "https://www.notion.com/help/link-previews"
+    },
+    {
+      "t": 34.5,
+      "kind": "read",
+      "msg": "https://www.notion.com/help/add-and-manage-connections-with-the-api"
+    },
+    {
+      "t": 35.1,
+      "kind": "think",
+      "msg": "Drafting from 9 pages to find gaps with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 62.7,
+      "kind": "gap",
+      "msg": "Investigating 1 open questions: Token expiration lifetime values and refresh token behavior specifics from Notion's token endpoint response."
+    },
+    {
+      "t": 62.7,
+      "kind": "search",
+      "msg": "site:developers.notion.com Token expiration lifetime values and refresh token behavior specifics from Notion s token "
+    },
+    {
+      "t": 66.3,
+      "kind": "read",
+      "msg": "https://developers.notion.com/guides"
+    },
+    {
+      "t": 92.9,
+      "kind": "skip",
+      "msg": "Unreadable or too short: https://developers.notion.com/guides"
+    },
+    {
+      "t": 92.9,
+      "kind": "read",
+      "msg": "https://developers.notion.com/guides/get-started/public-connections"
+    },
+    {
+      "t": 93.7,
+      "kind": "gap",
+      "msg": "Found 1 new pages"
+    },
+    {
+      "t": 94.3,
+      "kind": "think",
+      "msg": "Writing final guide from 10 pages with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 111.9,
+      "kind": "verify",
+      "msg": "Checking every quote against the fetched page text"
+    },
+    {
+      "t": 111.9,
+      "kind": "verify",
+      "msg": "8/12 quotes found verbatim in sources; timeline is sourced"
+    },
+    {
+      "t": 112.3,
+      "kind": "probe",
+      "msg": "GET https://api.notion.com/v1/oauth/authorize with a dummy client_id"
+    },
+    {
+      "t": 112.7,
+      "kind": "probe",
+      "msg": "POST https://api.notion.com/v1/oauth/token with dummy credentials"
+    }
+  ],
+  "composio": null,
+  "review": null,
+  "model_tier": "fallback"
+}

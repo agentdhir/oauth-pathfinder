@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OAuth Pathfinder</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <a href="/" class="brand"><span class="logo">⇄</span> OAuth Pathfinder</a>
+  <span class="tag">Know what it takes to ship OAuth for an app before you start.</span>
+</header>
+
+<main id="app">
+  <section id="home">
+    <div class="hero">
+      <h1>How hard is it to get an OAuth app approved for…</h1>
+      <form id="search" autocomplete="off">
+        <input id="q" placeholder="App name or website, e.g. Notion, calendly.com" required minlength="2" maxlength="120">
+        <button type="submit">Get guide</button>
+      </form>
+      <p class="hint">If the app is in the library you get its guide right away. Otherwise an agent searches the provider's docs, reads them, writes a sourced guide, checks every quote, and probes the live OAuth endpoints. This takes about a minute.</p>
+    </div>
+
+    <section id="live" hidden>
+      <h2>Agent working on <span id="live-name"></span></h2>
+      <ol id="log"></ol>
+    </section>
+
+    <section>
+      <div class="lib-head">
+        <h2>Guide library</h2>
+        <div class="filters" id="filters"></div>
+      </div>
+      <div id="library" class="grid"></div>
+    </section>
+  </section>
+
+  <section id="guide" hidden></section>
+</main>
+
+<footer class="foot">Guides are generated from provider docs and are only as good as their sources. Check the evidence marks and the "could not verify" section before you rely on them.</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

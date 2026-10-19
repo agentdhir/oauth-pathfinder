@@ -1,0 +1,709 @@
+{
+  "slug": "gmail",
+  "app_name": "Gmail",
+  "website": "https://mail.google.com/",
+  "category": "Productivity",
+  "summary": "To ship OAuth for Gmail, a developer must create a Google Cloud project, configure an OAuth consent screen and verify project domains, select scopes (such as full access or sensitive/restricted email scopes), obtain credentials, and submit the application for Google brand and sensitive scope verification before making it publicly available.",
+  "difficulty": "hard",
+  "difficulty_reason": "While basic apps or internal/testing setups are self-serve, shipping a production app publicly that requests sensitive or restricted Gmail scopes requires mandatory brand verification (2-3 business days), sensitive scope review (3-5 business days), submission of demonstration videos and scope justifications, and potentially an annual third-party security assessment if data is processed on an external server.",
+  "setup_time": "30-60 minutes",
+  "approval_wait": "2-3 business days for brand verification; 3-5 business days for sensitive scope verification; potentially several weeks if restricted scopes or third-party server security assessments are required",
+  "approval_required": true,
+  "approval_details": "Any public app requesting sensitive or restricted Google user data scopes (such as reading, composing, sending, or deleting Gmail messages) must complete brand verification and sensitive/restricted scope verification. This includes reviewing app identity, checking home pages and privacy policies, reviewing scope justifications, and submitting a YouTube demonstration video showing the OAuth grant process and scope usage. If data is stored or transmitted via a third-party server, an annual independent security assessment is also required.",
+  "authorization_url": "https://accounts.google.com/o/oauth2/v2/auth",
+  "token_url": "https://oauth2.googleapis.com/token",
+  "developer_console_url": "https://console.developers.google.com/",
+  "uses_pkce": true,
+  "requirements": [
+    {
+      "text": "A Google Cloud account and a Google Cloud project with billing enabled (if applicable for used APIs).",
+      "evidence": [
+        {
+          "source_id": 10,
+          "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+          "quote": "A Google Cloud account.",
+          "verified": true
+        },
+        {
+          "source_id": 10,
+          "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+          "quote": "A Google Cloud project.",
+          "verified": true
+        },
+        {
+          "source_id": 10,
+          "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+          "quote": "Also, make sure that billing is enabled for your Google Cloud project.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "Verify ownership of your project's authorized domains within the Google Search Console using an Owner or Editor account.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Verify ownership of your project's authorized domains within the Google Search Console. Use a Google Account that's associated with your API Console project as an Owner or an Editor.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "A publicly accessible application home page on a verified domain that describes app functionality and links to the privacy policy.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Your home page must be publicly accessible, and not just accessible to your site's logged-in users.",
+          "verified": true
+        },
+        {
+          "source_id": 3,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
+          "quote": "We ask you to verify the domain component available for registration on a public suffix: the \"top private domain.\"",
+          "verified": true
+        },
+        {
+          "source_id": 5,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/policy-compliance",
+          "quote": "Your application's home page must include a description of the app's functionality, as well as links to a privacy policy and optional terms of service.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "A visible privacy policy hosted within the same domain as the home page that discloses how Google user data is accessed, used, stored, or shared.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "The privacy policy must be visible to users, hosted within the same domain as your application's home page, and linked to on the OAuth consent screen of the Google API Console.",
+          "verified": true
+        },
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "The privacy policy must disclose the manner in which your application accesses, uses, stores, or shares Google user data.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "steps": [
+    {
+      "text": "Go to the Google API Console, click Create project, enter a name, and click Create. If you are a Google Workspace user, it is strongly recommended to create your developer project inside an organization resource.",
+      "evidence": [
+        {
+          "source_id": 5,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/policy-compliance",
+          "quote": "Go to the Google API Console. Click Create project, enter a name, and click Create.",
+          "verified": true
+        },
+        {
+          "source_id": 7,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/google-workspace",
+          "quote": "If you are a Google Workspace user, it is strongly recommended that your developer project is created inside a organization resource within your Google Workspace or Cloud Identity account.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Create a Google Cloud Project",
+      "url": "https://console.developers.google.com/",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Go to the Cloud Console OAuth Branding page. Select your project, choose External (or Internal depending on your audience), and provide app branding information including app name, support email, developer contact information, home page URI, and privacy policy URI.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Go to the Cloud Console OAuth Branding page.",
+          "verified": true
+        },
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "In the Branding page, provide your app's branding information, including app name, logo, developer contact information, and relevant links.",
+          "verified": true
+        },
+        {
+          "source_id": 10,
+          "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+          "quote": "Depending on your use case, select Internal or External, and then click Create.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Configure the OAuth Consent Screen",
+      "url": "https://console.developers.google.com/auth/branding",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Verify ownership of all top private domains associated with your application's home page, privacy policy, and redirect URIs using the Google Search Console with a Google Account that has owner permissions.",
+      "evidence": [
+        {
+          "source_id": 3,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
+          "quote": "Verify the ownership of your authorized domains using the Google Search Console. A Google Account with owner permissions for a domain must be associated with the API Console project that uses that authorized domain.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Verify Authorized Domains in Google Search Console",
+      "url": "https://search.google.com/search-console",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Navigate to the Credentials page, click Create credentials, and select OAuth client ID. Choose your application type (such as Web application or Desktop app), specify authorized JavaScript origins and redirect URIs, and save your client ID and client secret.",
+      "evidence": [
+        {
+          "source_id": 10,
+          "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+          "quote": "On the navigation menu, click Credentials. Click Create credentials, and then click OAuth client ID.",
+          "verified": true
+        },
+        {
+          "source_id": 10,
+          "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+          "quote": "Click Download JSON to download to your computer a JSON file containing your client ID and client secret",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Create OAuth Client Credentials",
+      "url": "https://console.developers.google.com/apis/credentials",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "In the Cloud Console's Data Access page (or OAuth consent screen configuration), use the Add or remove scopes button to declare all necessary scopes for your app (such as https://mail.google.com/ for full Gmail access or more narrow scopes).",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Use the Add or remove scopes button to declare all scopes requested by your app.",
+          "verified": true
+        },
+        {
+          "source_id": 10,
+          "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+          "quote": "Click Add or remove scopes. The Update selected scopes pane appears.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Declare Scopes",
+      "url": "https://console.developers.google.com/",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "While your app publishing status is set to Testing, you can test your implementation by adding individual Google accounts to the test user list (limited to a hard cap of 100 test users) or logging in with your own account.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "If your app is in the development or testing phases, you can leave the Publishing Status in the default setting of Testing. This setting means that your app is still in development and is only available to users you add to the list of test users.",
+          "verified": true
+        },
+        {
+          "source_id": 4,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/overview",
+          "quote": "Only users explicitly added to the test user allowlist can access the app (limited to a hard cap of 100 test users).",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Test Locally and Add Test Users",
+      "url": "https://console.developers.google.com/",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "In the Cloud Console OAuth Branding page, click the Verify Branding button to initiate automated review. Once successful, click Publish branding to make the branding live.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Click the Verify Branding button to start the evaluation process. The automated review usually completes in a few minutes.",
+          "verified": true
+        },
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Click the Publish branding button to make the new branding live.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Submit for Brand Verification",
+      "url": "https://console.developers.google.com/auth/branding",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Navigate to the OAuth Verification Center, provide detailed scope justifications explaining why narrower scopes are insufficient, and upload an unlisted YouTube demonstration video showing the English consent grant flow and app functionality.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "If your app also requires verification for sensitive or restricted scopes, navigate to the OAuth Verification Center to track your Data access status and provide any additional information requested, such as a demonstration video.",
+          "verified": true
+        },
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Prepare a detailed justification for each requested sensitive scope, as well as an explanation for why a narrower scope isn't sufficient.",
+          "verified": true
+        },
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Prepare a video that fully demonstrates how a user initiates and grants access to the requested scopes... Upload the video to YouTube Studio and set its Visibility as Unlisted.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Submit for Sensitive / Restricted Scope Verification",
+      "url": "https://console.developers.google.com/",
+      "actor": "developer",
+      "required": true
+    },
+    {
+      "text": "Once your branding and sensitive scopes are verified and approved, change your publishing status from Testing to Published to make your app available to any user with a Google Account.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "We recommend that you only submit your app for verification if you want to make your app available to any user with a Google Account.",
+          "verified": true
+        },
+        {
+          "source_id": 3,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
+          "quote": "In the Google API Console, your app's configuration is set for a user type of External and a published status of Published. This means your app is in production and is available to any user with a Google Account.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified",
+      "title": "Publish App for General Public Use",
+      "url": "https://console.developers.google.com/",
+      "actor": "developer",
+      "required": true
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Redirect URIs must exactly match one of the authorized redirect URIs configured in the Cloud Console client settings, otherwise a redirect_uri_mismatch error occurs.",
+      "evidence": [
+        {
+          "source_id": 11,
+          "url": "https://developers.google.com/identity/protocols/oauth2/native-app",
+          "quote": "The value must exactly match one of the authorized redirect URIs for the OAuth 2.0 client, which you configured in your client's Cloud Console Clients page. If this value doesn't match an authorized URI, you will get a redirect_uri_mismatch error.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "Unverified external published apps and apps in testing status are subject to a hard cap of 100 test users and display warning screens to users.",
+      "evidence": [
+        {
+          "source_id": 4,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/overview",
+          "quote": "Only users explicitly added to the test user allowlist can access the app (limited to a hard cap of 100 test users).",
+          "verified": true
+        },
+        {
+          "source_id": 4,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/overview",
+          "quote": "Because the app has not completed brand verification, the app's name and logo are not displayed on the consent screen. Additionally, for apps requesting sensitive or restricted scopes, unverified app warnings (Danger UI) will be displayed to users, and a hard cap of 100 total users applies.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "Compliant brand verification results are valid for only 7 days; if you do not publish within that timeframe, you must re-run the verification.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Compliant verification results are valid for 7 days. If you don't publish within that timeframe, the status will change to Need to re-verify and you will have to run the brand verification again.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "text": "Limits apply to the number of refresh tokens issued per client-user combination and per user across all clients; requesting too many causes older refresh tokens to stop working.",
+      "evidence": [
+        {
+          "source_id": 8,
+          "url": "https://developers.google.com/identity/protocols/oauth2",
+          "quote": "Limits apply to the number of refresh tokens that are issued per client-user combination, and per user across all clients, and these limits are different. If your application requests enough refresh tokens to go over one of the limits, older refresh tokens stop working.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "blockers": [
+    {
+      "issue": "redirect_uri_mismatch error during authentication",
+      "why_it_happens": "The redirect_uri parameter sent in the authorization request does not exactly match the authorized redirect URIs configured in the Google Cloud Console client settings.",
+      "workaround": "Ensure that the redirect URI in your code precisely matches (including protocol, trailing slashes, and paths) the URI added in the Google Cloud Console client configuration.",
+      "evidence": [
+        {
+          "source_id": 11,
+          "url": "https://developers.google.com/identity/protocols/oauth2/native-app",
+          "quote": "The value must exactly match one of the authorized redirect URIs for the OAuth 2.0 client, which you configured in your client's Cloud Console Clients page. If this value doesn't match an authorized URI, you will get a redirect_uri_mismatch error.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "issue": "Brand verification status changes to 'Need to re-verify'",
+      "why_it_happens": "You completed brand verification successfully but failed to click 'Publish branding' within the 7-day validity window.",
+      "workaround": "Re-run the automated brand verification process and immediately click the Publish branding button within 7 days.",
+      "evidence": [
+        {
+          "source_id": 1,
+          "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+          "quote": "Compliant verification results are valid for 7 days. If you don't publish within that timeframe, the status will change to Need to re-verify and you will have to run the brand verification again.",
+          "verified": true
+        }
+      ],
+      "confidence": "verified"
+    }
+  ],
+  "agent_can_do": [
+    "Generate code verifier and code challenge for PKCE",
+    "Construct authorization request URLs with appropriate query parameters",
+    "Exchange authorization codes for access and refresh tokens at the token endpoint",
+    "Refresh access tokens using stored refresh tokens"
+  ],
+  "developer_must_do": [
+    "Create and configure the Google Cloud project and associate it with an organization",
+    "Configure the OAuth consent screen branding information and populate app details",
+    "Verify domain ownership in Google Search Console using an Owner or Editor account",
+    "Create OAuth client credentials and download the client secret",
+    "Record and upload a demonstration video to YouTube for sensitive scope verification",
+    "Submit the application for brand and sensitive scope verification in the Google Cloud Console"
+  ],
+  "unverified": [
+    "What specific application type designation Google's verification team requires for an AI agent platform integrating Gmail via restricted scopes",
+    "Whether any special exception exists for AI agent platforms regarding third-party server security assessments when processing Gmail messages in memory"
+  ],
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+      "title": "Sensitive scope verification  |  App verification to use Google Authorization APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 2,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+      "title": "Restricted scope verification  |  App verification to use Google Authorization APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 3,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
+      "title": "Submit for brand verification  |  App verification to use Google Authorization APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 4,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/overview",
+      "title": "OAuth app state overview  |  App verification to use Google Authorization APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 6131,
+      "official": true
+    },
+    {
+      "id": 5,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/policy-compliance",
+      "title": "Comply with OAuth 2.0 policies  |  App verification to use Google Authorization APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 9716,
+      "official": true
+    },
+    {
+      "id": 6,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness",
+      "title": "404  |  Page Not Found  |  Google for Developers",
+      "fetched_via": "reader",
+      "chars": 5352,
+      "official": true
+    },
+    {
+      "id": 7,
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/google-workspace",
+      "title": "Additional considerations for Google Workspace  |  App verification to use Google Authorization APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 5201,
+      "official": true
+    },
+    {
+      "id": 8,
+      "url": "https://developers.google.com/identity/protocols/oauth2",
+      "title": "Using OAuth 2.0 to Access Google APIs  |  Authorization  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 9,
+      "url": "https://developers.google.com/identity/protocols/oauth2/scopes",
+      "title": "OAuth 2.0 Scopes for Google APIs  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 10,
+      "url": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google",
+      "title": "Configure your email channel for OAuth with Gmail  |  Google Cloud Contact Center as a Service  |  Google Cloud Documentation",
+      "fetched_via": "direct",
+      "chars": 5772,
+      "official": true
+    },
+    {
+      "id": 11,
+      "url": "https://developers.google.com/identity/protocols/oauth2/native-app",
+      "title": "OAuth 2.0 for Desktop Apps  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 14000,
+      "official": true
+    },
+    {
+      "id": 12,
+      "url": "https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid",
+      "title": "Get your Google API client ID  |  Web guides  |  Google for Developers",
+      "fetched_via": "direct",
+      "chars": 1468,
+      "official": true
+    }
+  ],
+  "probes": [
+    {
+      "name": "Authorization endpoint responds",
+      "url": "https://accounts.google.com/o/oauth2/v2/auth",
+      "result": "HTTP 302 → redirects to https://accounts.google.com/signin/oauth/error?authError=Cg9pbnZhbGlkX3JlcXVlc3QSIU1pc3NpbmcgcmVxdWlyZWQgcGFyYW1ldGVyOiBzY29wZRo3aHR0cHM6Ly9",
+      "ok": true
+    },
+    {
+      "name": "Token endpoint rejects dummy credentials",
+      "url": "https://oauth2.googleapis.com/token",
+      "result": "HTTP 401: { \"error\": \"invalid_client\", \"error_description\": \"The OAuth client was not found.\" }",
+      "ok": true
+    }
+  ],
+  "evidence_stats": {
+    "claims": 20,
+    "verified": 19,
+    "partial": 1,
+    "unsupported": 0,
+    "quotes": 39,
+    "quotes_verified": 38
+  },
+  "generated_at": "2026-10-19T16:26:30+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "timing": {
+    "text": "Setup 30-60 minutes; approval wait 2-3 business days for brand verification; 3-5 business days for sensitive scope verification; potentially several weeks if restricted scopes or third-party server security assessments are required",
+    "evidence": [
+      {
+        "source_id": 1,
+        "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+        "quote": "The sensitive scope verification process typically takes 3-5 business days to complete.",
+        "verified": true
+      },
+      {
+        "source_id": 2,
+        "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+        "quote": "brand verification, which typically takes 2-3 business days",
+        "verified": false
+      },
+      {
+        "source_id": 2,
+        "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+        "quote": "for this reason, the restricted scopes verification process can potentially take several weeks to complete.",
+        "verified": true
+      },
+      {
+        "source_id": 3,
+        "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification",
+        "quote": "The brand verification process typically takes 2-3 business days after submission.",
+        "verified": true
+      }
+    ],
+    "confidence": "partial"
+  },
+  "trace": [
+    {
+      "t": 0.0,
+      "kind": "plan",
+      "msg": "Researching Gmail"
+    },
+    {
+      "t": 0.0,
+      "kind": "search",
+      "msg": "Gmail OAuth app create developer docs"
+    },
+    {
+      "t": 5.6,
+      "kind": "search",
+      "msg": "Gmail register new OAuth application client ID client secret"
+    },
+    {
+      "t": 11.6,
+      "kind": "search",
+      "msg": "Gmail OAuth app review verification publish approval"
+    },
+    {
+      "t": 16.4,
+      "kind": "think",
+      "msg": "Identifying the official developer docs with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 23.5,
+      "kind": "plan",
+      "msg": "Gmail: OAuth provider Google; official docs on google.com, google.cn, googleblog.com"
+    },
+    {
+      "t": 23.5,
+      "kind": "search",
+      "msg": "site:developers.google.com OAuth app review OR publish OR verification OR scopes"
+    },
+    {
+      "t": 26.3,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+    },
+    {
+      "t": 26.3,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+    },
+    {
+      "t": 26.5,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification"
+    },
+    {
+      "t": 26.5,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness/overview"
+    },
+    {
+      "t": 26.5,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness/policy-compliance"
+    },
+    {
+      "t": 26.5,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness"
+    },
+    {
+      "t": 26.5,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/production-readiness/google-workspace"
+    },
+    {
+      "t": 26.5,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2"
+    },
+    {
+      "t": 28.9,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/scopes"
+    },
+    {
+      "t": 29.5,
+      "kind": "think",
+      "msg": "Drafting from 9 pages to find gaps with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 47.0,
+      "kind": "gap",
+      "msg": "Investigating 2 open questions: Exact cost of the independent third-party security assessment required for restricted scopes; Whether specific third-party assessment firms charge separate fees"
+    },
+    {
+      "t": 47.0,
+      "kind": "search",
+      "msg": "site:developers.google.com Exact cost of the independent third party security assessment required for restricted scop"
+    },
+    {
+      "t": 52.8,
+      "kind": "search",
+      "msg": "site:developers.google.com Whether specific third party assessment firms charge separate fees"
+    },
+    {
+      "t": 56.4,
+      "kind": "read",
+      "msg": "https://docs.cloud.google.com/contact-center/ccai-platform/docs/oauth-email-google"
+    },
+    {
+      "t": 56.5,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/protocols/oauth2/native-app"
+    },
+    {
+      "t": 57.8,
+      "kind": "read",
+      "msg": "https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid"
+    },
+    {
+      "t": 59.1,
+      "kind": "gap",
+      "msg": "Found 3 new pages"
+    },
+    {
+      "t": 59.6,
+      "kind": "think",
+      "msg": "Writing final guide from 12 pages with gemini-3.5-flash-lite"
+    },
+    {
+      "t": 80.6,
+      "kind": "verify",
+      "msg": "Checking every quote against the fetched page text"
+    },
+    {
+      "t": 80.6,
+      "kind": "verify",
+      "msg": "38/39 quotes found verbatim in sources; timeline is sourced"
+    },
+    {
+      "t": 81.0,
+      "kind": "probe",
+      "msg": "GET https://accounts.google.com/o/oauth2/v2/auth with a dummy client_id"
+    },
+    {
+      "t": 81.3,
+      "kind": "probe",
+      "msg": "POST https://oauth2.googleapis.com/token with dummy credentials"
+    }
+  ],
+  "composio": null,
+  "review": null,
+  "model_tier": "fallback"
+}
